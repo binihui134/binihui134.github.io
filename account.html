@@ -6,29 +6,7 @@
   <title>Account</title>
   <link href="account.css" rel="stylesheet" type="text/css">
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDSuZBu0jGhWUTxndwi4AGobd0FIhE0j00",
-      authDomain: "loginserver-af1a9.firebaseapp.com",
-      projectId: "loginserver-af1a9",
-      storageBucket: "loginserver-af1a9.appspot.com",
-      messagingSenderId: "978682389438",
-      appId: "1:978682389438:web:a88c775a17f21131ac0fef",
-      measurementId: "G-1QEY7CFLL8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        document.getElementById('welcome-message').innerText = `Welcome, ${user.email}`;
-      } else {
-        window.location.href = 'login.html'; // Redirect to login page if not logged in
-      }
-    });
 
     window.OpenAuth = () => {
       window.open("https://discord.com/oauth2/authorize?client_id=1271471668383973457&response_type=code&redirect_uri=https%3A%2F%2Fbinihui134.github.io%2Foauth-test%2F&scope=identify+email");
@@ -40,5 +18,7 @@
   <p id="welcome-message">Welcome, </p>
   <br>
   <button onclick="OpenAuth()">Authenticate</button>
+  <br>
+  <button onclick="SignOut()">Sign Out</button>
 </body>
 </html>
