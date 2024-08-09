@@ -1,13 +1,17 @@
-body = {
+body {
   font-family: sans-serif;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  display: flex; /* Use flexbox for centering */
+  flex-direction: column; /* Align items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: flex-start; /* Align items at the top */
+  text-align: center; /* Center text */
   font-weight: bold;
+  height: 100vh; /* Full viewport height */
+  margin: 0; /* Remove default margin */
 }
 
 .minishakk {
-  align-items: left;
+  align-self: flex-start; /* Align to the top left within the container */
   width: 100px;
   height: auto;
 }

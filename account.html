@@ -1,19 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account</title>
   <link href="account.css" rel="stylesheet" type="text/css">
-</head>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyDSuZBu0jGhWUTxndwi4AGobd0FIhE0j00",
+      authDomain: "loginserver-af1a9.firebaseapp.com",
+      projectId: "loginserver-af1a9",
+      storageBucket: "loginserver-af1a9.appspot.com",
+      messagingSenderId: "978682389438",
+      appId: "1:978682389438:web:a88c775a17f21131ac0fef",
+      measurementId: "G-1QEY7CFLL8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('welcome-message').innerText = `Welcome, ${user.email}`;
+      } else {
+        window.location.href = 'login.html'; // Redirect to login page if not logged in
+      }
+    });
+
+    window.OpenAuth = () => {
+      window.open("https://discord.com/oauth2/authorize?client_id=1271471668383973457&response_type=code&redirect_uri=https%3A%2F%2Fbinihui134.github.io%2Foauth-test%2F&scope=identify+email");
+    }
+  </script>
+</head>
 <body>
   <img src="https://media.discordapp.net/attachments/1270127383747498125/1270176651346575472/08a3300fc71afc0366032d96cbae4be0.webp?ex=66b75cf0&is=66b60b70&hm=37d6ec7631e43e2741d4408de251fec578771ee54b0e7768af3ab7420fbd4c39&" class="minishakk" alt="Minishakk">
   <p id="welcome-message">Welcome, </p>
-  <script src="script.js"></script>
   <br>
-  
+  <button onclick="OpenAuth()">Authenticate</button>
 </body>
-
 </html>
