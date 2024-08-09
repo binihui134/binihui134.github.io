@@ -1,0 +1,13 @@
+body = {
+  font-family: sans-serif;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+}
+
+.minishakk {
+  align-items: left;
+  width: 100px;
+  height: auto;
+}
