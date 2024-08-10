@@ -1,7 +1,7 @@
 import firebaseConfig from './obfusKeys.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, onSnapshot, addDoc, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, query, onSnapshot, addDoc, deleteDoc, doc, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
