@@ -28,6 +28,23 @@ button {
   flex-direction: column;
 }
 
+.message {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.delete-button {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
 .send-message-area {
   display: flex;
   justify-content: space-between;

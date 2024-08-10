@@ -1,7 +1,7 @@
 import firebaseConfig from './obfusKeys.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, onSnapshot, addDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, query, onSnapshot, addDoc, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -23,8 +23,18 @@ function displayMessages() {
     messagesContainer.innerHTML = ''; // Clear existing messages
     querySnapshot.forEach((doc) => {
       const messageData = doc.data();
+      const currentUser = auth.currentUser;
       const messageElement = document.createElement('div');
-      messageElement.textContent = `${messageData.username}: ${messageData.message}`;
+      messageElement.className = 'message';
+
+      // Check if the message is from the current user
+      const isOwnMessage = messageData.userId === currentUser?.uid;
+
+      messageElement.innerHTML = `
+        <span>${messageData.username}: ${messageData.message}</span>
+        ${isOwnMessage ? `<button class="delete-button" onclick="deleteMessage('${doc.id}')">Delete</button>` : ''}
+      `;
+
       messagesContainer.appendChild(messageElement);
     });
 
@@ -33,25 +43,57 @@ function displayMessages() {
   });
 }
 
-// Call the function to display messages when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  displayMessages();
-});
-
 // Function to send a message
 window.sendMessage = () => {
   const messageInput = document.getElementById('message-input');
-  const username = localStorage.getItem('username') || 'Anonymous';
+  const currentUser = auth.currentUser;
 
-  addDoc(messagesRef, {
-    username: username,
-    message: messageInput.value,
-    timestamp: new Date()
-  }).then(() => {
-    messageInput.value = ''; // Clear input field after sending
-  }).catch((error) => {
-    console.error('Error adding message: ', error);
-  });
+  if (currentUser) {
+    addDoc(messagesRef, {
+      username: currentUser.email.split('@')[0], // Extract username from email
+      message: messageInput.value,
+      timestamp: new Date(),
+      userId: currentUser.uid // Store user ID with the message
+    }).then(() => {
+      messageInput.value = ''; // Clear input field after sending
+    }).catch((error) => {
+      console.error('Error adding message: ', error);
+    });
+  } else {
+    console.error('No user is signed in');
+  }
+}
+
+// Function to delete a message
+window.deleteMessage = (messageId) => {
+  const currentUser = auth.currentUser;
+
+  if (currentUser) {
+    const messageDoc = doc(db, 'messages', messageId);
+
+    // Get the message document
+    getDoc(messageDoc).then((docSnap) => {
+      if (docSnap.exists()) {
+        const messageData = docSnap.data();
+        if (messageData.userId === currentUser.uid) {
+          // Only allow deletion if the current user is the owner of the message
+          deleteDoc(messageDoc).then(() => {
+            console.log('Message deleted successfully');
+          }).catch((error) => {
+            console.error('Error deleting message: ', error);
+          });
+        } else {
+          console.error('User does not have permission to delete this message');
+        }
+      } else {
+        console.error('Message does not exist');
+      }
+    }).catch((error) => {
+      console.error('Error getting message document: ', error);
+    });
+  } else {
+    console.error('No user is signed in');
+  }
 }
 
 // Registration function for user
@@ -98,4 +140,16 @@ window.signOut = () => {
   }).catch((error) => {
     console.error('Error signing out: ', error);
   });
+}
+
+// Call the function to display messages when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  displayMessages();
+});
+
+window.OpenWindowLogin = () => {
+  window.location.href = "login.html";
+}
+window.OpenWindowRegister = () => {
+  window.location.href = "index.html";
 }
