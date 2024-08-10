@@ -1,13 +1,15 @@
 body {
   font-family: sans-serif;
+  position: absolute;
   align-items: center;
   justify-content: center;
   text-align: center;
   font-weight: bold;
-};
+}
 
 button {
-  background-color: #4CAF50;
+  background-color: #007bff;
+  position: absolute;
   border: none;
   color: white;
   padding: 15px 32px;

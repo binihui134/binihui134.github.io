@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account</title>
-  <link href="account.css" rel="stylesheet" type="text/css">
-  <script type="module">
-
-
-    window.OpenAuth = () => {
-      window.open("https://discord.com/oauth2/authorize?client_id=1271471668383973457&response_type=code&redirect_uri=https%3A%2F%2Fbinihui134.github.io%2Foauth-test%2F&scope=identify+email");
-    }
-  </script>
+  <link rel="stylesheet" href="css/account.css">
+  <script type="module" src="script.js" defer></script>
 </head>
 <body>
-  <img src="https://media.discordapp.net/attachments/1270127383747498125/1270176651346575472/08a3300fc71afc0366032d96cbae4be0.webp?ex=66b75cf0&is=66b60b70&hm=37d6ec7631e43e2741d4408de251fec578771ee54b0e7768af3ab7420fbd4c39&" class="minishakk" alt="Minishakk">
-  <p id="welcome-message">Welcome, </p>
-  <br>
-  <button onclick="OpenAuth()">Authenticate</button>
-  <br>
-  <button onclick="SignOut()">Sign Out</button>
+  <h1 id="welcome-message">Welcome, User!</h1>
+  <button onClick="OpenWindowSettings()" class="Settings">Settings</button>
+  <div id="error-message" class="hidden"></div>
+
+  <!-- Message container -->
+  <div id="messages-container" class="messages-container"></div>
+
+  <!-- Send message area -->
+  <div class="send-message-area">
+    <input type="text" id="message-input" placeholder="Type your message here">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <button onclick="signOut()">Sign Out</button>
 </body>
 </html>

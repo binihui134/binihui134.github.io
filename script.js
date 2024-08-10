@@ -1,43 +1,63 @@
 import firebaseConfig from './obfusKeys.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, query, onSnapshot, addDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-function showError(message) {
-  const errorElement = document.getElementById('error-message');
-  if (errorElement) {
-    errorElement.textContent = message;
-    errorElement.classList.remove('hidden');
-    errorElement.classList.add('show');
+// Reference to the chat messages collection
+const messagesRef = collection(db, 'messages');
 
-    // Hide the message after 3 seconds
-    setTimeout(() => {
-      errorElement.classList.remove('show');
-      // Ensure the text disappears completely after the transition
-      setTimeout(() => {
-        errorElement.classList.add('hidden');
-      }, 500); // This should match the duration of the CSS transition
-    }, 3000); // Adjust time as needed
-  }
+// Function to display chat messages
+function displayMessages() {
+  const messagesContainer = document.getElementById('messages-container');
+
+  // Create a query to get all messages ordered by timestamp
+  const messagesQuery = query(messagesRef, orderBy('timestamp'));
+
+  // Listen to changes in the messages collection
+  onSnapshot(messagesQuery, (querySnapshot) => {
+    messagesContainer.innerHTML = ''; // Clear existing messages
+    querySnapshot.forEach((doc) => {
+      const messageData = doc.data();
+      const messageElement = document.createElement('div');
+      messageElement.textContent = `${messageData.username}: ${messageData.message}`;
+      messagesContainer.appendChild(messageElement);
+    });
+
+    // Scroll to the bottom of the messages container
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  });
 }
 
-function validateFields(username, password) {
-  if (!username || !password) {
-    showError('Fill in the fields');
-    return false;
-  }
-  return true;
+// Call the function to display messages when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  displayMessages();
+});
+
+// Function to send a message
+window.sendMessage = () => {
+  const messageInput = document.getElementById('message-input');
+  const username = localStorage.getItem('username') || 'Anonymous';
+
+  addDoc(messagesRef, {
+    username: username,
+    message: messageInput.value,
+    timestamp: new Date()
+  }).then(() => {
+    messageInput.value = ''; // Clear input field after sending
+  }).catch((error) => {
+    console.error('Error adding message: ', error);
+  });
 }
 
+// Registration function for user
 window.register = () => {
   const username = document.getElementById('username').value + "@example.com";
   const password = document.getElementById('password').value;
-
-  if (!validateFields(username, password)) {
-    return;
-  }
 
   createUserWithEmailAndPassword(auth, username, password)
     .then((userCredential) => {
@@ -45,18 +65,14 @@ window.register = () => {
       window.location.href = 'login.html'; // Redirect to login page
     })
     .catch((error) => {
-      showError('This username is in use!');
       console.error('Error: ', error.message);
     });
 }
 
+// Login function for user
 window.login = () => {
   const username = document.getElementById('username').value + "@example.com";
   const password = document.getElementById('password').value;
-
-  if (!validateFields(username, password)) {
-    return;
-  }
 
   signInWithEmailAndPassword(auth, username, password)
     .then((userCredential) => {
@@ -64,18 +80,22 @@ window.login = () => {
       window.location.href = 'account.html'; // Redirect to account page
     })
     .catch((error) => {
-      showError('This username/password is invalid');
       console.error('Error: ', error.message);
+      document.getElementById('error-message').textContent = "Invalid username or password!";
+      document.getElementById('error-message').classList.remove('hidden');
     });
 }
 
-window.OpenWindowRegister = () => {
-  window.location.href = 'index.html'; // Redirect to registration page
+// Function to open settings window
+window.OpenWindowSettings = () => {
+  window.location.href = 'settings.html'; // Redirect to settings page
 }
 
-window.OpenWindowLogin = () => {
-  window.location.href = 'login.html'; // Redirect to login page
-}
-window.SignOut = () => {
-  window.location.href = 'login.html'; // Redirect to login page
+// Function to sign out
+window.signOut = () => {
+  auth.signOut().then(() => {
+    window.location.href = 'login.html'; // Redirect to login page
+  }).catch((error) => {
+    console.error('Error signing out: ', error);
+  });
 }
